@@ -69,7 +69,10 @@ class CopperCloudClient():
                 'client_id': CopperCloudClient.CLIENT_ID,
                 'client_secret': CopperCloudClient.CLIENT_SECRET,
                 'audience': CopperCloudClient.BASE_API_URL}
-        self.token_data = requests.post(url=url, headers=headers, json=data).json()
+        response = requests.post(url=url, headers=headers, json=data)
+        if response.status_code != 200:
+            raise UnauthorizedError("Failed to obtain token. {}".format(response.content))
+        self.token_data = response.json()
         self.__update_cache()
 
     def __update_cache(self):
